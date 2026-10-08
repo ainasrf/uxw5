@@ -1,0 +1,596 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TYPE PLAYGROUND</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #111111;
+            color: white;
+            font-family: Helvetica, Arial, sans-serif;
+        }
+
+        /* PAGE 1 */
+        #page1 {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .small-label {
+            font-size: 12px;
+            letter-spacing: 3px;
+            color: #999;
+        }
+
+        #page1 h1 {
+            font-size: clamp(50px, 10vw, 130px);
+            line-height: 0.95;
+            letter-spacing: -5px;
+            color: #D9FF43;
+            margin: 30px 0;
+        }
+
+        #page1 p {
+            color: #aaa;
+            font-size: 16px;
+            margin-bottom: 40px;
+        }
+
+        #wordInput {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+            background: transparent;
+            border: 1px solid #555;
+            color: white;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 22px;
+            text-align: center;
+            outline: none;
+        }
+
+        #wordInput:focus {
+            border-color: #D9FF43;
+        }
+
+        button {
+            cursor: pointer;
+            font-family: Helvetica, Arial, sans-serif;
+            font-weight: bold;
+            border: none;
+        }
+
+        #startBtn {
+            margin-top: 20px;
+            padding: 20px 45px;
+            background: #D9FF43;
+            color: #111;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        #startBtn:hover {
+            background: white;
+        }
+
+        /* PAGE 2 */
+        #page2 {
+            display: none;
+            min-height: 100vh;
+            padding: 30px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .logo {
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: -0.5px;
+        }
+
+        .backBtn {
+            background: transparent;
+            color: white;
+            font-size: 13px;
+        }
+
+        .backBtn:hover {
+            color: #D9FF43;
+        }
+
+        .workspace {
+            display: flex;
+            gap: 25px;
+            height: calc(100vh - 115px);
+            min-height: 500px;
+        }
+
+        /* PREVIEW */
+        .preview {
+            flex: 1;
+            background: #D9FF43;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        #previewText {
+            font-family: Helvetica, Arial, sans-serif;
+            font-weight: bold;
+            font-size: 65px;
+            letter-spacing: 0px;
+            color: rgb(0, 0, 0);
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        /* CONTROL PANEL */
+        .controls {
+            width: 320px;
+            background: #1D1D1D;
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .controls h2 {
+            font-size: 14px;
+            letter-spacing: 2px;
+            color: #D9FF43;
+            margin: 0 0 30px;
+        }
+
+        .control-group {
+            margin-bottom: 28px;
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
+        .value {
+            color: #999;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: #D9FF43;
+            cursor: pointer;
+        }
+
+        .color-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .color-btn {
+            width: 45px;
+            height: 35px;
+            border: 2px solid transparent;
+        }
+
+        .color-btn.selected {
+            border-color: white;
+        }
+
+        .divider {
+            border-top: 1px solid #444;
+            margin: 30px 0;
+        }
+
+        .rgb-label {
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .rgb-value {
+            float: right;
+            color: #999;
+        }
+
+        .rgb-slider {
+            margin-bottom: 20px;
+        }
+
+        #redSlider {
+            accent-color: #FF5555;
+        }
+
+        #greenSlider {
+            accent-color: #55DD77;
+        }
+
+        #blueSlider {
+            accent-color: #5599FF;
+        }
+
+        .bottom-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .bottom-buttons button {
+            flex: 1;
+            padding: 14px 8px;
+            font-size: 11px;
+        }
+
+        #resetBtn {
+            background: transparent;
+            border: 1px solid #666;
+            color: white;
+        }
+
+        #changeBtn {
+            background: #D9FF43;
+            color: black;
+        }
+
+        /* MOBILE */
+        @media (max-width: 750px) {
+            .workspace {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .preview {
+                height: 350px;
+                flex: none;
+            }
+
+            .controls {
+                width: 100%;
+            }
+
+            #page1 h1 {
+                letter-spacing: -2px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- PAGE 1 -->
+    <div id="page1">
+
+        <div class="small-label">
+            TYPE PLAYGROUND / 01
+        </div>
+
+        <h1>YOUR WORD.<br>YOUR RULES.</h1>
+
+        <p>Type something. Make it yours.</p>
+
+        <input
+            type="text"
+            id="wordInput"
+            placeholder="Enter your word..."
+            maxlength="20"
+        >
+
+        <button id="startBtn">
+            START DESIGNING →
+        </button>
+
+    </div>
+
+
+    <!-- PAGE 2 -->
+    <div id="page2">
+
+        <div class="topbar">
+            <div class="logo">TYPE PLAYGROUND®</div>
+
+            <button class="backBtn" id="backBtn">
+                ← BACK
+            </button>
+        </div>
+
+        <div class="workspace">
+
+            <!-- LEFT: PREVIEW -->
+            <div class="preview" id="preview">
+
+                <div id="previewText">PLAY</div>
+
+            </div>
+
+
+            <!-- RIGHT: CONTROLS -->
+            <div class="controls">
+
+                <h2>DESIGN STUDIO / 02</h2>
+
+                <!-- FONT SIZE -->
+                <div class="control-group">
+
+                    <div class="control-label">
+                        <span>FONT SIZE</span>
+                        <span class="value" id="sizeValue">65px</span>
+                    </div>
+
+                    <input type="range"
+                           id="sizeSlider"
+                           min="20"
+                           max="200"
+                           value="65">
+
+                </div>
+
+
+                <!-- LETTER SPACING -->
+                <div class="control-group">
+
+                    <div class="control-label">
+                        <span>LETTER SPACING</span>
+                        <span class="value" id="spacingValue">0px</span>
+                    </div>
+
+                    <input type="range"
+                           id="spacingSlider"
+                           min="-5"
+                           max="30"
+                           value="0">
+
+                </div>
+
+
+                <!-- ROTATION -->
+                <div class="control-group">
+
+                    <div class="control-label">
+                        <span>ROTATION</span>
+                        <span class="value" id="rotationValue">0°</span>
+                    </div>
+
+                    <input type="range"
+                           id="rotationSlider"
+                           min="-180"
+                           max="180"
+                           value="0">
+
+                </div>
+
+
+                <!-- BACKGROUND COLOR -->
+                <div class="control-group">
+
+                    <div class="control-label">
+                        <span>BACKGROUND COLOR</span>
+                    </div>
+
+                    <div class="color-options">
+
+                        <button class="color-btn selected"
+                                style="background:#D9FF43"
+                                data-color="#D9FF43"></button>
+
+                        <button class="color-btn"
+                                style="background:#FFABD5"
+                                data-color="#FFABD5"></button>
+
+                        <button class="color-btn"
+                                style="background:#9ACBFF"
+                                data-color="#9ACBFF"></button>
+
+                        <button class="color-btn"
+                                style="background:#F5F5F5"
+                                data-color="#F5F5F5"></button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="divider"></div>
+
+
+                <!-- TEXT COLOR -->
+                <h2>TEXT COLOR / RGB</h2>
+
+                <div class="rgb-slider">
+                    <div class="rgb-label">
+                        RED
+                        <span class="rgb-value" id="redValue">0</span>
+                    </div>
+                    <input type="range" id="redSlider"
+                           min="0" max="255" value="0">
+                </div>
+
+                <div class="rgb-slider">
+                    <div class="rgb-label">
+                        GREEN
+                        <span class="rgb-value" id="greenValue">0</span>
+                    </div>
+                    <input type="range" id="greenSlider"
+                           min="0" max="255" value="0">
+                </div>
+
+                <div class="rgb-slider">
+                    <div class="rgb-label">
+                        BLUE
+                        <span class="rgb-value" id="blueValue">0</span>
+                    </div>
+                    <input type="range" id="blueSlider"
+                           min="0" max="255" value="0">
+                </div>
+
+
+                <div class="bottom-buttons">
+
+                    <button id="resetBtn">↺ RESET</button>
+
+                    <button id="changeBtn">CHANGE WORD →</button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // PAGE ELEMENTS
+        const page1 = document.getElementById("page1");
+        const page2 = document.getElementById("page2");
+
+        const wordInput = document.getElementById("wordInput");
+        const previewText = document.getElementById("previewText");
+        const preview = document.getElementById("preview");
+
+
+        // START DESIGNING
+        startBtn.onclick = function() {
+
+            if (wordInput.value.trim() === "") {
+                alert("Please enter a word!");
+                return;
+            }
+
+            previewText.textContent = wordInput.value;
+
+            page1.style.display = "none";
+            page2.style.display = "block";
+        };
+
+
+        // BACK TO PAGE 1
+        backBtn.onclick = function() {
+            page2.style.display = "none";
+            page1.style.display = "flex";
+        };
+
+        changeBtn.onclick = function() {
+            page2.style.display = "none";
+            page1.style.display = "flex";
+        };
+
+
+        // FONT SIZE
+        sizeSlider.oninput = function() {
+            previewText.style.fontSize = sizeSlider.value + "px";
+            sizeValue.innerHTML = sizeSlider.value + "px";
+        };
+
+
+        // LETTER SPACING
+        spacingSlider.oninput = function() {
+            previewText.style.letterSpacing =
+                spacingSlider.value + "px";
+
+            spacingValue.innerHTML =
+                spacingSlider.value + "px";
+        };
+
+
+        // ROTATION
+        rotationSlider.oninput = function() {
+            previewText.style.transform =
+                "rotate(" + rotationSlider.value + "deg)";
+
+            rotationValue.innerHTML =
+                rotationSlider.value + "°";
+        };
+
+
+        // BACKGROUND COLOR
+        const colorButtons =
+            document.querySelectorAll(".color-btn");
+
+        colorButtons.forEach(function(button) {
+
+            button.onclick = function() {
+
+                preview.style.background =
+                    button.dataset.color;
+
+                colorButtons.forEach(function(btn) {
+                    btn.classList.remove("selected");
+                });
+
+                button.classList.add("selected");
+            };
+
+        });
+
+
+        // TEXT COLOR RGB
+        function updateTextColor() {
+
+            previewText.style.color =
+                "rgb(" +
+                redSlider.value + "," +
+                greenSlider.value + "," +
+                blueSlider.value + ")";
+
+            redValue.innerHTML = redSlider.value;
+            greenValue.innerHTML = greenSlider.value;
+            blueValue.innerHTML = blueSlider.value;
+        }
+
+        redSlider.oninput = updateTextColor;
+        greenSlider.oninput = updateTextColor;
+        blueSlider.oninput = updateTextColor;
+
+
+        // RESET DESIGN
+        resetBtn.onclick = function() {
+
+            sizeSlider.value = 65;
+            spacingSlider.value = 0;
+            rotationSlider.value = 0;
+
+            redSlider.value = 0;
+            greenSlider.value = 0;
+            blueSlider.value = 0;
+
+            previewText.style.fontSize = "65px";
+            previewText.style.letterSpacing = "0px";
+            previewText.style.transform = "rotate(0deg)";
+
+            sizeValue.innerHTML = "65px";
+            spacingValue.innerHTML = "0px";
+            rotationValue.innerHTML = "0°";
+
+            preview.style.background = "#D9FF43";
+
+            colorButtons.forEach(function(btn) {
+                btn.classList.remove("selected");
+            });
+
+            colorButtons[0].classList.add("selected");
+
+            updateTextColor();
+        };
+
+    </script>
+
+</body>
+</html>
